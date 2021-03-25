@@ -29,7 +29,9 @@ class HightroDataDelegate: NSObject, URLSessionDataDelegate {
     }
     
     func getLatest() -> [String: [String: Any]] {
-        return self.latestTaskEvents
+        let oldEvents = self.latestTaskEvents
+        self.latestTaskEvents = [:]
+        return oldEvents
     }
     
     func assignBridgeModule(module: HightroUploadService) {
@@ -41,16 +43,20 @@ class HightroDataDelegate: NSObject, URLSessionDataDelegate {
         guard let ID = task.taskDescription else {
             return;
         }
+        var hadRequestError = false
         var data: [String: Any] = ["ID": ID]
-        let response : HTTPURLResponse = task.response as! HTTPURLResponse
-        data.updateValue(response.statusCode, forKey: "status")
-        if let storedData = extractResponse(forTask: ID) {
-            data.updateValue(storedData, forKey: "body")
+        if let response : HTTPURLResponse = task.response as? HTTPURLResponse {
+            hadRequestError = response.statusCode >= 300
+            data.updateValue(response.statusCode, forKey: "status")
+            if let storedData = extractResponse(forTask: ID) {
+                data.updateValue(storedData, forKey: "body")
+            }
         }
         var event : String = "HightroUploadService-";
-        if(error == nil && response.statusCode < 300){
+        if(error == nil && !hadRequestError){
             event.append("completed");
         } else if let err = error as NSError? {
+            RCTLogInfo(err.code == NSURLErrorCancelled ? "Task with ID \(ID) was cancelled, possibly due to the user force closing the app while in progress." : err.localizedDescription)
             event.append(err.code == NSURLErrorCancelled ? "cancelled" : "error")
             data.updateValue(err.localizedDescription, forKey: "error")
         }
@@ -187,12 +193,12 @@ class HightroUploadService: RCTEventEmitter {
         return resolve(nil)
     }
     
-    @objc(retrieveEvents:withRejecter:)
-    func retrieveEvents(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
-        if let delegate = HightroSessionManager.getDelegate() as? HightroDataDelegate {
-            return resolve(delegate.getLatest())
-        }
-        resolve(nil)
+    @objc(retrieveEvents:withResolver:withRejecter:)
+    func retrieveEvents(forTasks tasks: [String], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
+        let savedEvents = (HightroSessionManager.getDelegate() as? HightroDataDelegate)?.getLatest()
+        var forJS: [[String: Any]?] = []
+        tasks.forEach({body in forJS.append(savedEvents?[body]) })
+        resolve(forJS)
     }
 }
 

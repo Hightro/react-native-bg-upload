@@ -23,11 +23,17 @@ export interface IUploadSubscriber {
   onNativeCompleted: (status: number) => void;
 }
 
-interface NativeEventData { 
+interface NativeEventData {
+  //Common
   ID: string;
-  error?: string; 
-  bytesSent?: number;
+  //Completed, cancelled and error
   status?: number; 
+  body?: any
+  error?: string; 
+  //Progress
+  bytesSent?: number;
+  //Retrieving saved events, check this value when checking what to do with the event
+  eventType?: string
 }
 const eventTypes : UploadEvent[] = ["progress", "cancelled", "error", "completed"];
 
@@ -87,6 +93,10 @@ class Uploader {
 
   startUpload(options: UploadOptions): Promise<string> {
     return HightroUploadService.startUpload(options);
+  }
+
+  retrieveLastEvents(targetIDs: string[]) : NativeEventData[] {
+    return HightroUploadService.retrieveEvents(targetIDs);
   }
 }
 
