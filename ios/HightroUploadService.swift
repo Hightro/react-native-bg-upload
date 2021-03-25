@@ -1,15 +1,9 @@
 import Foundation
-import UIKit
-
 
 class HightroDataDelegate: NSObject, URLSessionDataDelegate {
-    public weak var bridgeModule: HightroUploadService?;
+    private weak var bridgeModule: HightroUploadService?;
     private var latestTaskEvents: [String: [String: Any]] = [:]
     private var responseBodies: [String: Data] = [:]
-    
-    init (bridgeModule: HightroUploadService) {
-        self.bridgeModule = bridgeModule;
-    }
     
     //MARK: Class Utilities
     private func extractResponse(forTask ID: String) -> String? {
@@ -38,6 +32,9 @@ class HightroDataDelegate: NSObject, URLSessionDataDelegate {
         return self.latestTaskEvents
     }
     
+    func assignBridgeModule(module: HightroUploadService) {
+        self.bridgeModule = module
+    }
     
     //MARK: URLSessionDataDelegate implementations
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
@@ -62,8 +59,8 @@ class HightroDataDelegate: NSObject, URLSessionDataDelegate {
     
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+        guard let ID = task.taskDescription else { return }
         let eventName = "HightroUploadService-progress";
-        let ID = task.taskDescription ?? "";
         let data: Dictionary<String, Any> = [
             "ID": ID,
             "bytesSent": totalBytesSent
@@ -103,23 +100,15 @@ class HightroDataDelegate: NSObject, URLSessionDataDelegate {
 @objc(HightroUploadService)
 class HightroUploadService: RCTEventEmitter {
     var hasListeners = false
-    private var urlSession: URLSession!
-    private static let backgroundSessionID = "com.hightro.background";
     
     override init() {
         super.init()
-        guard let existingSession = HightroSessionManager.getURLSession() else {
-            let delegate = HightroDataDelegate(bridgeModule: self);
-            let sessionConfiguration: URLSessionConfiguration = URLSessionConfiguration.background(withIdentifier: HightroUploadService.backgroundSessionID)
-            self.urlSession = URLSession(configuration: sessionConfiguration, delegate: delegate, delegateQueue: nil)
-            HightroSessionManager.register(self.urlSession)
-            RCTLogInfo("Created new URL session")
-            return
-        }
-        self.urlSession = existingSession
-        if let del = self.urlSession.delegate as? HightroDataDelegate {
-            del.bridgeModule = self;
-            RCTLogInfo("Retrieved existing URL Session with correct delegate.")
+        if(!HightroSessionManager.sessionExists()){
+            let delegate = HightroDataDelegate();
+            delegate.assignBridgeModule(module: self)
+            HightroSessionManager.createSession(delegate)
+        } else if let delegate = HightroSessionManager.getDelegate() as? HightroDataDelegate {
+            delegate.assignBridgeModule(module: self)
         }
     }
     
@@ -141,7 +130,6 @@ class HightroUploadService: RCTEventEmitter {
     }
     
     @objc override func startObserving() {
-        RCTLog("Started observing")
         hasListeners = true;
     }
 
@@ -152,7 +140,6 @@ class HightroUploadService: RCTEventEmitter {
     @objc override func invalidate() {
         RCTLogInfo("Invalidating HightroUploadService module")
     }
-
     
     public func sendUploadUpdate(eventName: String, body: Dictionary<String, Any>) -> Bool {
         if hasListeners {
@@ -193,18 +180,19 @@ class HightroUploadService: RCTEventEmitter {
                 request.setValue(val, forHTTPHeaderField: entry.key)
             }
         }
-        let uploadTask: URLSessionUploadTask = self.urlSession.uploadTask(with: request, fromFile: mediaStorageLocation)
-        uploadTask.taskDescription = ID
-        uploadTask.resume()
+        if (!HightroSessionManager.createTask(with: request, withFilePath: mediaStorageLocation, withID: ID)) {
+            return reject("Error", "Target NSURLSession does not exist, please open an issue on GitHub if this occurs.", nil)
+        }
+        
         return resolve(nil)
     }
     
     @objc(retrieveEvents:withRejecter:)
     func retrieveEvents(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
-        guard let del = self.urlSession.delegate as? HightroDataDelegate else {
-            return resolve(nil)
+        if let delegate = HightroSessionManager.getDelegate() as? HightroDataDelegate {
+            return resolve(delegate.getLatest())
         }
-        return resolve(del.getLatest())
+        resolve(nil)
     }
 }
 
