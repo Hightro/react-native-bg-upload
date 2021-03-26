@@ -39,7 +39,7 @@ const eventTypes : UploadEvent[] = ["progress", "cancelled", "error", "completed
 
 class Uploader {
   _nativeSubscriptions: EmitterSubscription[] = [];
-  _subscribers: Map<string, IUploadSubscriber> = new Map<string, IUploadSubscriber>();
+  _subscribers: Map<String, IUploadSubscriber> = new Map<String, IUploadSubscriber>();
   
 
   _callEventHandlerForID(ID: string, eventType: UploadEvent, data: NativeEventData) {
@@ -95,7 +95,7 @@ class Uploader {
     return HightroUploadService.startUpload(options);
   }
 
-  retrieveLastEvents(targetIDs: string[]) : NativeEventData[] {
+  async retrieveLastEvents(targetIDs: string[]) : Promise<NativeEventData[]> {
     return HightroUploadService.retrieveEvents(targetIDs);
   }
 }
