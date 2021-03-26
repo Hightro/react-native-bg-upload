@@ -21,7 +21,7 @@ class HightroDataDelegate: NSObject, URLSessionDataDelegate {
     private func tryEmit(event: String, data: [String: Any], ID: String) -> Void {
         var mutableData = data;
         if let bridgeModule = self.bridgeModule {
-            if bridgeModule.sendUploadUpdate(eventName: event, body: data) { return; }
+            if bridgeModule.sendUploadUpdate(eventName: "HightroUploadService-\(event)", body: data) { return; }
         }
         RCTLog("Could not emit, storing to dictionary.");
         mutableData.updateValue(event, forKey: "eventType")
@@ -52,12 +52,12 @@ class HightroDataDelegate: NSObject, URLSessionDataDelegate {
                 data.updateValue(storedData, forKey: "body")
             }
         }
-        var event : String = "HightroUploadService-";
+        var event : String = "";
         if(error == nil && !hadRequestError){
-            event.append("completed");
+            event = "completed"
         } else if let err = error as NSError? {
             RCTLogInfo(err.code == NSURLErrorCancelled ? "Task with ID \(ID) was cancelled, possibly due to the user force closing the app while in progress." : err.localizedDescription)
-            event.append(err.code == NSURLErrorCancelled ? "cancelled" : "error")
+            event = (err.code == NSURLErrorCancelled ? "cancelled" : "error")
             data.updateValue(err.localizedDescription, forKey: "error")
         }
         self.tryEmit(event: event, data: data, ID: ID)
@@ -66,12 +66,11 @@ class HightroDataDelegate: NSObject, URLSessionDataDelegate {
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         guard let ID = task.taskDescription else { return }
-        let eventName = "HightroUploadService-progress";
         let data: Dictionary<String, Any> = [
             "ID": ID,
             "bytesSent": totalBytesSent
         ];
-        self.tryEmit(event: eventName, data: data, ID: ID)
+        self.tryEmit(event: "progress", data: data, ID: ID)
     }
     
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
