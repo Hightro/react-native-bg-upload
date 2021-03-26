@@ -193,13 +193,10 @@ class HightroUploadService: RCTEventEmitter {
         return resolve(nil)
     }
     
-    @objc(retrieveEvents:withResolver:withRejecter:)
-    func retrieveEvents(forTasks tasks: [String], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
+    @objc(retrieveEvents:withRejecter:)
+    func retrieveEvents(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         let savedEvents = (HightroSessionManager.getDelegate() as? HightroDataDelegate)?.getLatest()
-        RCTLog("Saved events \(String(describing: savedEvents?.count))")
-        var forJS: [[String: Any]?] = []
-        tasks.forEach({body in forJS.append(savedEvents?[body]) })
-        resolve(forJS)
+        resolve(savedEvents)
     }
 }
 
