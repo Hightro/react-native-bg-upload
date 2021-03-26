@@ -25,7 +25,7 @@ class HightroDataDelegate: NSObject, URLSessionDataDelegate {
         }
         RCTLog("Could not emit, storing to dictionary.");
         mutableData.updateValue(event, forKey: "eventType")
-        self.latestTaskEvents.updateValue(data, forKey: ID)
+        self.latestTaskEvents.updateValue(mutableData, forKey: ID)
     }
     
     func getLatest() -> [String: [String: Any]] {

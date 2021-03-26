@@ -17,13 +17,10 @@ export interface UploadOptions {
 };
 
 export interface IUploadSubscriber {
-  onNativeError: (error: string ) => void;
-  onNativeCancelled: () => void;
-  onNativeProgress: (sent: number) => void;
-  onNativeCompleted: (status: number) => void;
+  handleEvent: (data: NativeEventData | undefined) => void;
 }
 
-interface NativeEventData {
+export interface NativeEventData {
   //Common
   ID: string;
   //Completed, cancelled and error
@@ -33,7 +30,7 @@ interface NativeEventData {
   //Progress
   bytesSent?: number;
   //Retrieving saved events, check this value when checking what to do with the event
-  eventType?: string
+  eventType?: UploadEvent
 }
 const eventTypes : UploadEvent[] = ["progress", "cancelled", "error", "completed"];
 
@@ -42,25 +39,13 @@ class Uploader {
   _subscribers: Map<String, IUploadSubscriber> = new Map<String, IUploadSubscriber>();
   
 
-  _callEventHandlerForID(ID: string, eventType: UploadEvent, data: NativeEventData) {
-    const sub = this._subscribers.get(ID);
+  async _callEventHandlerForID(eventType: UploadEvent, data: NativeEventData) {
+    const sub = this._subscribers.get(data.ID);
     if(!sub) return;
-    switch(eventType){
-      case "cancelled":
-        sub.onNativeCancelled();
-        break;
-      case "completed":
-        sub.onNativeCompleted(data.status ?? 200);
-        break;
-      case "error":
-        sub.onNativeError(data.error ?? "Error not passed by module.");
-        break;
-      case "progress":
-        sub.onNativeProgress(data.bytesSent ?? 0);
-        break;
-    }
+    data.eventType = eventType;
+    sub.handleEvent(data);
     if(eventType !== "progress"){
-      this._unsubscribe(ID);
+      this._unsubscribe(data.ID);
     }
   }
 
@@ -86,7 +71,7 @@ class Uploader {
   _startNativeListening() {
     const subs = [];
     for(const type of eventTypes){
-      subs.push(emitter.addListener(eventPrefix + type, (data: NativeEventData) => this._callEventHandlerForID(data.ID, type, data), this));
+      subs.push(emitter.addListener(eventPrefix + type, (data: NativeEventData) => this._callEventHandlerForID(type, data), this));
     }
     return subs;
   }
