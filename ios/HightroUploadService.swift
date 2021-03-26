@@ -132,7 +132,7 @@ class HightroUploadService: RCTEventEmitter {
     }
     
     @objc override class func requiresMainQueueSetup() -> Bool {
-        return false
+        return true
     }
     
     @objc override func startObserving() {
@@ -196,6 +196,7 @@ class HightroUploadService: RCTEventEmitter {
     @objc(retrieveEvents:withResolver:withRejecter:)
     func retrieveEvents(forTasks tasks: [String], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         let savedEvents = (HightroSessionManager.getDelegate() as? HightroDataDelegate)?.getLatest()
+        RCTLog("Saved events \(String(describing: savedEvents?.count))")
         var forJS: [[String: Any]?] = []
         tasks.forEach({body in forJS.append(savedEvents?[body]) })
         resolve(forJS)
