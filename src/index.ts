@@ -95,7 +95,7 @@ class Uploader {
     return HightroUploadService.startUpload(options);
   }
 
-  async retrieveLastEvents(targetIDs: string[]) : Promise<NativeEventData[]> {
+  async retrieveLastEvents(targetIDs: string[]) : Promise<(NativeEventData | null)[]> {
     return HightroUploadService.retrieveEvents(targetIDs);
   }
 }
