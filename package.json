@@ -1,5 +1,5 @@
 {
-  "name": "hightro-upload-service",
+  "name": "react-native-shadow-upload",
   "version": "0.4.11",
   "description": "A native module for background upload in react native.",
   "license": "mit",
@@ -13,9 +13,9 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/Hightro/react-native-upload-service",
+  "repository": "https://github.com/Hightro/react-native-shadow-upload",
   "author": "Joshua Nicholl <josh@hightro.com> (https://github.com/Hightro)",
-  "homepage": "https://github.com/Hightro/react-native-upload-service#readme",
+  "homepage": "https://github.com/Hightro/react-native-shadow-upload#readme",
   "devDependencies": {
     "@types/jest": "^26.0.0",
     "@types/react": "^16.9.19",

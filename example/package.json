@@ -1,6 +1,8 @@
 {
   "name": "react-native-test-example",
   "description": "Example app for react-native-test",
+  "react-native": "./index",
+  "main": "./index",
   "version": "0.0.1",
   "private": true,
   "scripts": {

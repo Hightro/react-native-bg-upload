@@ -1,14 +1,14 @@
 //
-//  HightroBackgroundResponder.h
+//  ShadowUploadResponder.h
 //  Pods
 //
 //  Created by Joshua Nicholl on 21/3/21.
 //
 
-#ifndef HightroBackgroundResponder_h
-#define HightroBackgroundResponder_h
+#ifndef ShadowUploadResponder_h
+#define ShadowUploadResponder_h
 
-@interface HightroSessionManager: NSObject
+@interface ShadowUploadManager: NSObject
 + (void)setCompletionHandler:(void (^ __nonnull)(void)) handler;
 + (void (^ __nullable)(void))getCompletionHandler;
 + (bool)sessionExists;
@@ -16,4 +16,4 @@
 + (bool)createTaskWithRequest:(NSURLRequest* __nonnull)request withFilePath:(NSURL* __nonnull)path withID:(NSString* __nonnull)taskID;
 + (id<NSURLSessionDataDelegate> __nullable)getDelegate;
 @end
-#endif /* HightroBackgroundResponder_h */
+#endif /* ShadowUploadResponder_h */

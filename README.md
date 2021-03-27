@@ -1,17 +1,17 @@
-# hightro-upload-service
+# react-native-shadow-upload
 
-A native module for background upload in react native.
+A native module for background upload in react native. Currently supports iOS only.
 
 ## Installation
 
 ```sh
-npm install hightro-upload-service
+npm install react-native-shadow-upload
 ```
 
 ## Usage
 
 ```js
-import uploader from "hightro-upload-service";
+import uploader from "react-native-shadow-upload";
 
 // ...
 

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "hightro-upload-service": ["./src/index"]
+      "react-native-shadow-upload": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

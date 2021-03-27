@@ -1,7 +1,7 @@
 import Foundation
 
-class HightroDataDelegate: NSObject, URLSessionDataDelegate {
-    private weak var bridgeModule: HightroUploadService?;
+class ShadowUploadDataDelegate: NSObject, URLSessionDataDelegate {
+    private weak var bridgeModule: ShadowUploadModule?;
     private var latestTaskEvents: [String: [String: Any]] = [:]
     private var responseBodies: [String: Data] = [:]
     
@@ -11,30 +11,37 @@ class HightroDataDelegate: NSObject, URLSessionDataDelegate {
             return nil
         }
         responseBodies.removeValue(forKey: ID)
-        guard let response = String(data: responseData, encoding: .utf16) else {
+        guard let response = String(data: responseData, encoding: .utf8) else {
             return nil
         }
         return response
     }
+
+    private func extractEvent(forTask ID: String) -> [String: Any]? {
+        guard let event = latestTaskEvents[ID] else {
+            return nil
+        }
+        latestTaskEvents[ID]?.removeValue(forKey: ID)
+        return event
+    }
     
     //MARK: Bridge Communication Utilities
-    private func tryEmit(event: String, data: [String: Any], ID: String) -> Void {
-        var mutableData = data;
+    private func tryEmit(event: String, data: inout [String: Any], ID: String) -> Void {
         if let bridgeModule = self.bridgeModule {
-            if bridgeModule.sendUploadUpdate(eventName: "HightroUploadService-\(event)", body: data) { return; }
+            if bridgeModule.sendUploadUpdate(eventName: "ShadowUpload-\(event)", body: data) { return; }
         }
-        RCTLog("Could not emit, storing to dictionary.");
-        mutableData.updateValue(event, forKey: "eventType")
-        self.latestTaskEvents.updateValue(mutableData, forKey: ID)
+        data.updateValue(event, forKey: "eventType")
+        self.latestTaskEvents.updateValue(data, forKey: ID)
     }
     
-    func getLatest() -> [String: [String: Any]] {
-        let oldEvents = self.latestTaskEvents
-        self.latestTaskEvents = [:]
-        return oldEvents
+    func getLatest(requestedEvents: inout [String: [String: Any]?]) {
+        requestedEvents.keys.forEach({ID in
+            requestedEvents[ID] = self.extractEvent(forTask: ID)
+        });
+        
     }
     
-    func assignBridgeModule(module: HightroUploadService) {
+    func assignBridgeModule(module: ShadowUploadModule) {
         self.bridgeModule = module
     }
     
@@ -56,25 +63,24 @@ class HightroDataDelegate: NSObject, URLSessionDataDelegate {
         if(error == nil && !hadRequestError){
             event = "completed"
         } else if let err = error as NSError? {
-            RCTLogInfo(err.code == NSURLErrorCancelled ? "Task with ID \(ID) was cancelled, possibly due to the user force closing the app while in progress." : err.localizedDescription)
             event = (err.code == NSURLErrorCancelled ? "cancelled" : "error")
             data.updateValue(err.localizedDescription, forKey: "error")
         }
-        self.tryEmit(event: event, data: data, ID: ID)
+        self.tryEmit(event: event, data: &data, ID: ID)
     }
     
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         guard let ID = task.taskDescription else { return }
-        let data: Dictionary<String, Any> = [
+        var data: [String: Any] = [
             "ID": ID,
             "bytesSent": totalBytesSent
         ];
-        self.tryEmit(event: "progress", data: data, ID: ID)
+        self.tryEmit(event: "progress", data: &data, ID: ID)
     }
     
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-        guard let handler = HightroSessionManager.getCompletionHandler() else {
+        guard let handler = ShadowUploadManager.getCompletionHandler() else {
             return;
         }
         DispatchQueue.main.async {
@@ -82,7 +88,7 @@ class HightroDataDelegate: NSObject, URLSessionDataDelegate {
         }
     }
     
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
         if let ID = dataTask.taskDescription {
             responseBodies.updateValue(Data(), forKey: ID)
         }
@@ -96,37 +102,35 @@ class HightroDataDelegate: NSObject, URLSessionDataDelegate {
         }
         responseBodies[ID]!.append(data)
     }
-    
-    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        //TODO: Implement CoreData storage of saved events
-    }
 }
 
-@objc(HightroUploadService)
-class HightroUploadService: RCTEventEmitter {
+@objc(ShadowUploadModule)
+class ShadowUploadModule: RCTEventEmitter {
     var hasListeners = false
     
     override init() {
         super.init()
-        if(!HightroSessionManager.sessionExists()){
-            let delegate = HightroDataDelegate();
+        if(!ShadowUploadManager.sessionExists()){
+            let delegate = ShadowUploadDataDelegate();
             delegate.assignBridgeModule(module: self)
-            HightroSessionManager.createSession(delegate)
-        } else if let delegate = HightroSessionManager.getDelegate() as? HightroDataDelegate {
+            ShadowUploadManager.createSession(delegate)
+        } else if let delegate = ShadowUploadManager.getDelegate() as? ShadowUploadDataDelegate {
             delegate.assignBridgeModule(module: self)
         }
     }
     
     deinit {
-        RCTLogInfo("Deallocating HightroUploadService module")
+        RCTLogInfo("Deallocating ShadowUploadModule")
     }
+    
+    
     
     @objc override func supportedEvents() -> [String]! {
         return [
-            "HightroUploadService-progress",
-            "HightroUploadService-cancelled",
-            "HightroUploadService-error",
-            "HightroUploadService-completed"
+            "ShadowUpload-progress",
+            "ShadowUpload-cancelled",
+            "ShadowUpload-error",
+            "ShadowUpload-completed"
         ]
     }
     
@@ -143,10 +147,10 @@ class HightroUploadService: RCTEventEmitter {
     }
     
     @objc override func invalidate() {
-        RCTLogInfo("Invalidating HightroUploadService module")
+        RCTLogInfo("Invalidating ShadowUploadModule")
     }
     
-    public func sendUploadUpdate(eventName: String, body: Dictionary<String, Any>) -> Bool {
+    public func sendUploadUpdate(eventName: String, body: [String: Any]) -> Bool {
         if hasListeners {
             self.sendEvent(withName: eventName, body: body)
             return true;
@@ -166,7 +170,7 @@ class HightroUploadService: RCTEventEmitter {
         guard let fileURI = options["path"] as? String else { return incorrectOptionFormat("path") }
         guard let method = options["method"] as? String else { return incorrectOptionFormat("method") }
         guard let ID = options["ID"] as? String else { return incorrectOptionFormat("ID") }
-        guard let headers = options["headers"] as? Dictionary<String, Any> else { return incorrectOptionFormat("headers") }
+        guard let headers = options["headers"] as? [String: Any] else { return incorrectOptionFormat("headers") }
         
         guard let requestURL = URL(string: uploadURL) else {
             return reject("Error", "Upload URL is invalid, you need to encode it or you have not added a URI protocol prefix", nil)
@@ -185,17 +189,19 @@ class HightroUploadService: RCTEventEmitter {
                 request.setValue(val, forHTTPHeaderField: entry.key)
             }
         }
-        if (!HightroSessionManager.createTask(with: request, withFilePath: mediaStorageLocation, withID: ID)) {
-            return reject("Error", "Target NSURLSession does not exist, please open an issue on GitHub if this occurs.", nil)
+        if (!ShadowUploadManager.createTask(with: request, withFilePath: mediaStorageLocation, withID: ID)) {
+            return reject("Error", "Target NSURLSession does not exist.", nil)
         }
         
         return resolve(nil)
     }
     
-    @objc(retrieveEvents:withRejecter:)
-    func retrieveEvents(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
-        let savedEvents = (HightroSessionManager.getDelegate() as? HightroDataDelegate)?.getLatest()
-        resolve(savedEvents)
+    @objc(retrieveEventsForTasks:withResolver:withRejecter:)
+    func retrieveEvents(forTasks tasks: [String], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
+        var out: [String: [String: Any]?] = [:]
+        tasks.forEach({str in out[str] = nil })
+        (ShadowUploadManager.getDelegate() as? ShadowUploadDataDelegate)?.getLatest(requestedEvents: &out)
+        resolve(out)
     }
 }
 

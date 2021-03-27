@@ -1,10 +1,10 @@
 import { NativeModules, NativeEventEmitter, EmitterSubscription } from 'react-native';
 
-const { HightroUploadService } = NativeModules
-const emitter = new NativeEventEmitter(HightroUploadService);
+const { ShadowUploadModule } = NativeModules
+const emitter = new NativeEventEmitter(ShadowUploadModule);
 
 
-const eventPrefix = 'HightroUploadService-';
+const eventPrefix = 'ShadowUpload-';
 
 export type UploadEvent = 'progress' | 'error' | 'completed' | 'cancelled';
 
@@ -37,16 +37,23 @@ const eventTypes : UploadEvent[] = ["progress", "cancelled", "error", "completed
 class Uploader {
   _nativeSubscriptions: EmitterSubscription[] = [];
   _subscribers: Map<String, IUploadSubscriber> = new Map<String, IUploadSubscriber>();
-  
+  private static instance: Uploader | null = null
+
+  private constructor(){ }
+
+  static async getInstance() {
+    if(!this.instance) {
+      this.instance = new Uploader();
+    }
+    return this.instance;
+  }
 
   async _callEventHandlerForID(eventType: UploadEvent, data: NativeEventData) {
     const sub = this._subscribers.get(data.ID);
     if(!sub) return;
     data.eventType = eventType;
     sub.handleEvent(data);
-    if(eventType !== "progress"){
-      this._unsubscribe(data.ID);
-    }
+    eventType !== "progress" && this._unsubscribe(data.ID);
   }
 
   subscribe(id: string, sub: IUploadSubscriber) {
@@ -77,12 +84,12 @@ class Uploader {
   }
 
   startUpload(options: UploadOptions): Promise<string> {
-    return HightroUploadService.startUpload(options);
+    return ShadowUploadModule.startUpload(options);
   }
 
-  async retrieveLastEvents() : Promise<{ [id: string]: NativeEventData | undefined }> {
-    return HightroUploadService.retrieveEvents();
+  async retrieveLastEvents(taskIDs: string[]) : Promise<{ [id: string]: NativeEventData | undefined }> {
+    return ShadowUploadModule.retrieveEvents(taskIDs);
   }
 }
 
-export default new Uploader();
+export default Uploader.getInstance;

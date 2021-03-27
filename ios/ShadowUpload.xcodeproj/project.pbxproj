@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AEBFAEAC260732B6005A4779 /* HightroSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AEBFAEAB260732B6005A4779 /* HightroSessionManager.m */; platformFilter = ios; };
+		AEBFAEAC260732B6005A4779 /* ShadowUploadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AEBFAEAB260732B6005A4779 /* ShadowUploadManager.m */; platformFilter = ios; };
 		AEBFAEB3260732DE005A4779 /* RCTSwiftLog.m in Sources */ = {isa = PBXBuildFile; fileRef = AEBFAEB0260732DE005A4779 /* RCTSwiftLog.m */; };
 		AEBFAEB4260732DE005A4779 /* RCTLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEBFAEB1260732DE005A4779 /* RCTLog.swift */; };
-		F4FF95D7245B92E800C19C63 /* HightroUploadService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* HightroUploadService.swift */; platformFilter = ios; };
+		F4FF95D7245B92E800C19C63 /* ShadowUploadModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* ShadowUploadModule.swift */; platformFilter = ios; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,16 +26,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		134814201AA4EA6300B7C361 /* libHightroUploadService.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHightroUploadService.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		AEBFAEAA260732B5005A4779 /* HightroSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HightroSessionManager.h; sourceTree = "<group>"; };
-		AEBFAEAB260732B6005A4779 /* HightroSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HightroSessionManager.m; sourceTree = "<group>"; };
+		134814201AA4EA6300B7C361 /* libShadowUpload.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libShadowUpload.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		AEBFAEAA260732B5005A4779 /* ShadowUploadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowUploadManager.h; sourceTree = "<group>"; };
+		AEBFAEAB260732B6005A4779 /* ShadowUploadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShadowUploadManager.m; sourceTree = "<group>"; };
 		AEBFAEB0260732DE005A4779 /* RCTSwiftLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTSwiftLog.m; sourceTree = "<group>"; };
 		AEBFAEB1260732DE005A4779 /* RCTLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RCTLog.swift; sourceTree = "<group>"; };
 		AEBFAEB2260732DE005A4779 /* RCTSwiftLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTSwiftLog.h; sourceTree = "<group>"; };
 		AEF99FAD26018A5200DE8355 /* third-party.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "third-party.xcconfig"; path = "../node_modules/react-native/React/third-party.xcconfig"; sourceTree = "<group>"; };
-		B3E7B5891CC2AC0600A0062D /* HightroUploadService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HightroUploadService.m; sourceTree = "<group>"; };
-		F4FF95D5245B92E700C19C63 /* HightroUploadService-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HightroUploadService-Bridging-Header.h"; sourceTree = "<group>"; };
-		F4FF95D6245B92E800C19C63 /* HightroUploadService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HightroUploadService.swift; sourceTree = "<group>"; };
+		B3E7B5891CC2AC0600A0062D /* ShadowUploadModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShadowUploadModule.m; sourceTree = "<group>"; };
+		F4FF95D5245B92E700C19C63 /* ShadowUploadModule-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ShadowUploadModule-Bridging-Header.h"; sourceTree = "<group>"; };
+		F4FF95D6245B92E800C19C63 /* ShadowUploadModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowUploadModule.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,7 +52,7 @@
 		134814211AA4EA7D00B7C361 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				134814201AA4EA6300B7C361 /* libHightroUploadService.a */,
+				134814201AA4EA6300B7C361 /* libShadowUpload.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,11 +61,11 @@
 			isa = PBXGroup;
 			children = (
 				AEBFAEAF260732DE005A4779 /* SwiftLogging */,
-				AEBFAEAA260732B5005A4779 /* HightroSessionManager.h */,
-				AEBFAEAB260732B6005A4779 /* HightroSessionManager.m */,
-				F4FF95D6245B92E800C19C63 /* HightroUploadService.swift */,
-				B3E7B5891CC2AC0600A0062D /* HightroUploadService.m */,
-				F4FF95D5245B92E700C19C63 /* HightroUploadService-Bridging-Header.h */,
+				AEBFAEAA260732B5005A4779 /* ShadowUploadManager.h */,
+				AEBFAEAB260732B6005A4779 /* ShadowUploadManager.m */,
+				F4FF95D6245B92E800C19C63 /* ShadowUploadModule.swift */,
+				B3E7B5891CC2AC0600A0062D /* ShadowUploadModule.m */,
+				F4FF95D5245B92E700C19C63 /* ShadowUploadModule-Bridging-Header.h */,
 				134814211AA4EA7D00B7C361 /* Products */,
 				AEF99FAC26018A5100DE8355 /* Frameworks */,
 			);
@@ -92,9 +92,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		58B511DA1A9E6C8500147676 /* HightroUploadService */ = {
+		58B511DA1A9E6C8500147676 /* ShadowUpload */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "HightroUploadService" */;
+			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "ShadowUpload" */;
 			buildPhases = (
 				58B511D71A9E6C8500147676 /* Sources */,
 				58B511D81A9E6C8500147676 /* Frameworks */,
@@ -104,9 +104,9 @@
 			);
 			dependencies = (
 			);
-			name = HightroUploadService;
+			name = ShadowUpload;
 			productName = RCTDataManager;
-			productReference = 134814201AA4EA6300B7C361 /* libHightroUploadService.a */;
+			productReference = 134814201AA4EA6300B7C361 /* libShadowUpload.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -123,7 +123,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "HightroUploadService" */;
+			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "ShadowUpload" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -136,7 +136,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				58B511DA1A9E6C8500147676 /* HightroUploadService */,
+				58B511DA1A9E6C8500147676 /* ShadowUpload */,
 			);
 		};
 /* End PBXProject section */
@@ -146,8 +146,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AEBFAEAC260732B6005A4779 /* HightroSessionManager.m in Sources */,
-				F4FF95D7245B92E800C19C63 /* HightroUploadService.swift in Sources */,
+				AEBFAEAC260732B6005A4779 /* ShadowUploadManager.m in Sources */,
+				F4FF95D7245B92E800C19C63 /* ShadowUploadModule.swift in Sources */,
 				AEBFAEB4260732DE005A4779 /* RCTLog.swift in Sources */,
 				AEBFAEB3260732DE005A4779 /* RCTSwiftLog.m in Sources */,
 			);
@@ -203,9 +203,9 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = HightroUploadService;
+				PRODUCT_NAME = ShadowUploadModule;
 				SDKROOT = iphoneos;
-				SWIFT_OBJC_BRIDGING_HEADER = "HightroUploadService-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "ShadowUploadModule-Bridging-Header.h";
 			};
 			name = Debug;
 		};
@@ -248,9 +248,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = HightroUploadService;
+				PRODUCT_NAME = ShadowUploadModule;
 				SDKROOT = iphoneos;
-				SWIFT_OBJC_BRIDGING_HEADER = "HightroUploadService-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "ShadowUploadModule-Bridging-Header.h";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -266,10 +266,9 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = HightroUploadService;
+				PRODUCT_NAME = ShadowUpload;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "HightroUploadService-Bridging-Header.h";
-				SWIFT_OBJC_INTERFACE_HEADER_NAME = "HightroUploadService-Swift.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "ShadowUploadModule-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -286,10 +285,9 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = HightroUploadService;
+				PRODUCT_NAME = ShadowUpload;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "HightroUploadService-Bridging-Header.h";
-				SWIFT_OBJC_INTERFACE_HEADER_NAME = "HightroUploadService-Swift.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "ShadowUploadModule-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -297,7 +295,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "HightroUploadService" */ = {
+		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "ShadowUpload" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511ED1A9E6C8500147676 /* Debug */,
@@ -306,7 +304,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "HightroUploadService" */ = {
+		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "ShadowUpload" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				58B511F01A9E6C8500147676 /* Debug */,

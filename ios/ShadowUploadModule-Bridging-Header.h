@@ -2,4 +2,4 @@
 #import <React/RCTEventEmitter.h>
 #import <React/RCTInvalidating.h>
 #import "RCTSwiftLog.h"
-#import "HightroSessionManager.h"
+#import "ShadowUploadManager.h"

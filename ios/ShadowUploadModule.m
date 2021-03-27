@@ -1,7 +1,7 @@
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventEmitter.h>
 
-@interface RCT_EXTERN_MODULE(HightroUploadService, RCTEventEmitter)
+@interface RCT_EXTERN_MODULE(ShadowUploadModule, RCTEventEmitter)
 
 RCT_EXTERN_METHOD(startUpload:(NSDictionary)options
                  withResolver:(RCTPromiseResolveBlock)resolve

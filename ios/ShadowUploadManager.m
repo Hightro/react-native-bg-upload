@@ -1,19 +1,19 @@
 //
-//  HightroBackgroundResponder.m
-//  HightroUploadService
+//  ShadowUploadManager.m
+//  ShadowUploadModule
 //
 //  Created by Joshua Nicholl on 21/3/21.
 //
 
 #import <Foundation/Foundation.h>
 #import <Foundation/NSURLSession.h>
-#import "HightroSessionManager.h"
+#import "ShadowUploadManager.h"
 #import <React/RCTLog.h>
 
-@implementation HightroSessionManager
+@implementation ShadowUploadManager
 static void (^backgroundCompletionHandler)(void) = nil;
 static NSURLSession* _session = nil;
-NSString* __nonnull backgroundSessionID = @"com.hightro.background";
+NSString* __nonnull backgroundSessionID = @"com.hightro.shadow";
 
 + (void)setCompletionHandler:(void (^)(void))handler {
     backgroundCompletionHandler = handler;
