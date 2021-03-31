@@ -3,11 +3,12 @@
 
 @interface RCT_EXTERN_MODULE(ShadowUploadModule, RCTEventEmitter)
 
-RCT_EXTERN_METHOD(startUpload:(NSDictionary)options
+RCT_EXTERN_METHOD(startUploadWithOptions:(NSDictionary)options
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(retrieveEvents:(RCTPromiseResolveBlock)resolve
+RCT_EXTERN_METHOD(retrieveEventsForTasks:(NSArray)tasks
+                  withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(supportedEvents)

@@ -1,109 +1,5 @@
 import Foundation
 
-class ShadowUploadDataDelegate: NSObject, URLSessionDataDelegate {
-    private weak var bridgeModule: ShadowUploadModule?;
-    private var latestTaskEvents: [String: [String: Any]] = [:]
-    private var responseBodies: [String: Data] = [:]
-    
-    //MARK: Class Utilities
-    private func extractResponse(forTask ID: String) -> String? {
-        guard let responseData = responseBodies[ID] else {
-            return nil
-        }
-        responseBodies.removeValue(forKey: ID)
-        guard let response = String(data: responseData, encoding: .utf8) else {
-            return nil
-        }
-        return response
-    }
-
-    private func extractEvent(forTask ID: String) -> [String: Any]? {
-        guard let event = latestTaskEvents[ID] else {
-            return nil
-        }
-        latestTaskEvents[ID]?.removeValue(forKey: ID)
-        return event
-    }
-    
-    //MARK: Bridge Communication Utilities
-    private func tryEmit(event: String, data: inout [String: Any], ID: String) -> Void {
-        if let bridgeModule = self.bridgeModule {
-            if bridgeModule.sendUploadUpdate(eventName: "ShadowUpload-\(event)", body: data) { return; }
-        }
-        data.updateValue(event, forKey: "eventType")
-        self.latestTaskEvents.updateValue(data, forKey: ID)
-    }
-    
-    func getLatest(requestedEvents: inout [String: [String: Any]?]) {
-        requestedEvents.keys.forEach({ID in
-            requestedEvents[ID] = self.extractEvent(forTask: ID)
-        });
-        
-    }
-    
-    func assignBridgeModule(module: ShadowUploadModule) {
-        self.bridgeModule = module
-    }
-    
-    //MARK: URLSessionDataDelegate implementations
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        guard let ID = task.taskDescription else {
-            return;
-        }
-        var hadRequestError = false
-        var data: [String: Any] = ["ID": ID]
-        if let response : HTTPURLResponse = task.response as? HTTPURLResponse {
-            hadRequestError = response.statusCode >= 300
-            data.updateValue(response.statusCode, forKey: "status")
-            if let storedData = extractResponse(forTask: ID) {
-                data.updateValue(storedData, forKey: "body")
-            }
-        }
-        var event : String = "";
-        if(error == nil && !hadRequestError){
-            event = "completed"
-        } else if let err = error as NSError? {
-            event = (err.code == NSURLErrorCancelled ? "cancelled" : "error")
-            data.updateValue(err.localizedDescription, forKey: "error")
-        }
-        self.tryEmit(event: event, data: &data, ID: ID)
-    }
-    
-    
-    func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-        guard let ID = task.taskDescription else { return }
-        var data: [String: Any] = [
-            "ID": ID,
-            "bytesSent": totalBytesSent
-        ];
-        self.tryEmit(event: "progress", data: &data, ID: ID)
-    }
-    
-    func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-        guard let handler = ShadowUploadManager.getCompletionHandler() else {
-            return;
-        }
-        DispatchQueue.main.async {
-            handler();
-        }
-    }
-    
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
-        if let ID = dataTask.taskDescription {
-            responseBodies.updateValue(Data(), forKey: ID)
-        }
-        return completionHandler(.allow)
-    }
-    
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        guard let ID = dataTask.taskDescription else { return }
-        if responseBodies[ID] == nil {
-            responseBodies.updateValue(Data(), forKey: ID)
-        }
-        responseBodies[ID]!.append(data)
-    }
-}
-
 @objc(ShadowUploadModule)
 class ShadowUploadModule: RCTEventEmitter {
     var hasListeners = false
@@ -111,20 +7,27 @@ class ShadowUploadModule: RCTEventEmitter {
     override init() {
         super.init()
         if(!ShadowUploadManager.sessionExists()){
-            let delegate = ShadowUploadDataDelegate();
-            delegate.assignBridgeModule(module: self)
+            let delegate = ShadowUploadDelegate();
+            delegate.assignBridgeModule(self)
             ShadowUploadManager.createSession(delegate)
-        } else if let delegate = ShadowUploadManager.getDelegate() as? ShadowUploadDataDelegate {
-            delegate.assignBridgeModule(module: self)
+        } else if let delegate = ShadowUploadManager.getDelegate() as? ShadowUploadDelegate {
+            delegate.assignBridgeModule(self)
         }
     }
     
     deinit {
         RCTLogInfo("Deallocating ShadowUploadModule")
     }
+    //MARK: Class Utilities
+    public func sendUploadUpdate(eventName: String, body: [String: Any]) -> Bool {
+        if hasListeners {
+            self.sendEvent(withName: eventName, body: body)
+            return true;
+        }
+        return false;
+    }
     
-    
-    
+    //MARK: RCTBridgeModule overrides
     @objc override func supportedEvents() -> [String]! {
         return [
             "ShadowUpload-progress",
@@ -150,18 +53,9 @@ class ShadowUploadModule: RCTEventEmitter {
         RCTLogInfo("Invalidating ShadowUploadModule")
     }
     
-    public func sendUploadUpdate(eventName: String, body: [String: Any]) -> Bool {
-        if hasListeners {
-            self.sendEvent(withName: eventName, body: body)
-            return true;
-        }
-        return false;
-    }
-    
-    //MARK: - Native Methods
-    
-    @objc(startUpload:withResolver:withRejecter:)
-    func startUpload(options: NSDictionary, resolve: RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    //MARK: Native Module Methods
+    @objc(startUploadWithOptions:withResolver:withRejecter:)
+    func startUpload(withOptions options: NSDictionary, resolve: RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         let incorrectOptionFormat: (_: String) -> Void = {paramName in
             let expectedType = paramName != "headers" ? "a string" : "an object with type { [header: string]: string | number }";
             return reject("Error", "Option '\(paramName)' must be \(expectedType)", nil)
@@ -173,15 +67,15 @@ class ShadowUploadModule: RCTEventEmitter {
         guard let headers = options["headers"] as? [String: Any] else { return incorrectOptionFormat("headers") }
         
         guard let requestURL = URL(string: uploadURL) else {
-            return reject("Error", "Upload URL is invalid, you need to encode it or you have not added a URI protocol prefix", nil)
+            return reject("Error", "Upload URL is invalid, you may not have added a URI protocol prefix", nil)
         }
         guard let mediaStorageLocation = URL(string:fileURI) else {
-            return reject("Error", "Storage location is invalid, you need to encode it or you have not added a URI protocol prefix", nil)
+            return reject("Error", "Storage location is invalid, you may not have added a URI protocol prefix", nil)
         }
         var request: URLRequest = URLRequest(url:requestURL)
         request.httpMethod = method
         for entry in headers {
-            if(entry.value is Int){
+            if entry.value is Int {
                 let val = String(entry.value as! Int)
                 request.setValue(val, forHTTPHeaderField: entry.key)
             } else if entry.value is String {
@@ -198,9 +92,9 @@ class ShadowUploadModule: RCTEventEmitter {
     
     @objc(retrieveEventsForTasks:withResolver:withRejecter:)
     func retrieveEvents(forTasks tasks: [String], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
-        var out: [String: [String: Any]?] = [:]
+        var out: [String: [String: String]?] = [:]
         tasks.forEach({str in out[str] = nil })
-        (ShadowUploadManager.getDelegate() as? ShadowUploadDataDelegate)?.getLatest(requestedEvents: &out)
+        (ShadowUploadManager.getDelegate() as? ShadowUploadDelegate)?.getLatest(requestedEvents: &out)
         resolve(out)
     }
 }
