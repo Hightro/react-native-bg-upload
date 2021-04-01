@@ -1,6 +1,6 @@
 {
   "name": "react-native-shadow-upload",
-  "version": "0.4.11",
+  "version": "0.4.12",
   "description": "A native module for background upload in react native.",
   "license": "mit",
   "main": "src/index",

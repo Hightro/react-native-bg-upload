@@ -41,7 +41,7 @@ class Uploader {
 
   private constructor(){ }
 
-  static async getInstance() {
+  static getInstance() {
     if(!this.instance) {
       this.instance = new Uploader();
     }
@@ -92,4 +92,4 @@ class Uploader {
   }
 }
 
-export default Uploader.getInstance;
+export default Uploader.getInstance();
