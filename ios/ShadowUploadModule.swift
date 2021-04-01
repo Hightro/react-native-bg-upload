@@ -54,8 +54,8 @@ class ShadowUploadModule: RCTEventEmitter {
     }
     
     //MARK: Native Module Methods
-    @objc(startUploadWithOptions:withResolver:withRejecter:)
-    func startUpload(withOptions options: NSDictionary, resolve: RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    @objc(startUpload:withResolver:withRejecter:)
+    func startUpload(options: NSDictionary, resolve: RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
         let incorrectOptionFormat: (_: String) -> Void = {paramName in
             let expectedType = paramName != "headers" ? "a string" : "an object with type { [header: string]: string | number }";
             return reject("Error", "Option '\(paramName)' must be \(expectedType)", nil)
@@ -90,8 +90,8 @@ class ShadowUploadModule: RCTEventEmitter {
         return resolve(nil)
     }
     
-    @objc(retrieveEventsForTasks:withResolver:withRejecter:)
-    func retrieveEvents(forTasks tasks: [String], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
+    @objc(retrieveEvents:withResolver:withRejecter:)
+    func retrieveEvents(tasks: [String], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         var out: [String: [String: String]?] = [:]
         tasks.forEach({str in out[str] = nil })
         (ShadowUploadManager.getDelegate() as? ShadowUploadDelegate)?.getLatest(requestedEvents: &out)

@@ -11,7 +11,7 @@ import Foundation
 class ShadowUploadDelegate: NSObject, URLSessionDataDelegate {
     private let storageFile = "events.json"
     
-    private var latestTaskEvents: [String: [String: String]]!
+    private var latestTaskEvents: [String: [String: String]] = [:]
     private var responseBodies: [String: Data] = [:]
     
     private weak var bridgeModule: ShadowUploadModule?
@@ -20,19 +20,19 @@ class ShadowUploadDelegate: NSObject, URLSessionDataDelegate {
         super.init()
         let fileManager = FileManager.default
         guard let dir = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            latestTaskEvents = [:]
             return
         }
         let fileURL = dir.appendingPathComponent(storageFile)
         if !fileManager.fileExists(atPath: fileURL.absoluteString) {
-            latestTaskEvents = [:]
             return
         }
         do {
-            latestTaskEvents = try (JSONDecoder().decode(Dictionary<String, [String: String]>.self, from: Data(contentsOf: fileURL)))
+            let savedEvents = try (JSONDecoder().decode(Dictionary<String, [String: String]>.self, from: Data(contentsOf: fileURL)))
+            for (id, event) in savedEvents {
+                latestTaskEvents.updateValue(event, forKey: id)
+            }
         } catch {
             tryLog(error: error.localizedDescription)
-            latestTaskEvents = [:]
         }
     }
     
@@ -80,7 +80,7 @@ class ShadowUploadDelegate: NSObject, URLSessionDataDelegate {
     
     func getLatest(requestedEvents: inout [String: [String: String]?]) {
         requestedEvents.keys.forEach({ID in
-            requestedEvents[ID] = self.extractSavedEvent(forTask: ID)
+            requestedEvents.updateValue(self.extractSavedEvent(forTask: ID), forKey: ID)
         });
         self.saveLoaded()
     }
