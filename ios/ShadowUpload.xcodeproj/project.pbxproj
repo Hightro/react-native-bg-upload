@@ -27,6 +27,7 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libShadowUpload.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libShadowUpload.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		AE11F62F2615E15000077FBA /* ShadowUploadDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowUploadDelegate.swift; sourceTree = "<group>"; };
 		AEBFAEAA260732B5005A4779 /* ShadowUploadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowUploadManager.h; sourceTree = "<group>"; };
 		AEBFAEAB260732B6005A4779 /* ShadowUploadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShadowUploadManager.m; sourceTree = "<group>"; };
 		AEBFAEB0260732DE005A4779 /* RCTSwiftLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTSwiftLog.m; sourceTree = "<group>"; };
@@ -60,6 +61,7 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				AE11F62F2615E15000077FBA /* ShadowUploadDelegate.swift */,
 				AEBFAEAF260732DE005A4779 /* SwiftLogging */,
 				AEBFAEAA260732B5005A4779 /* ShadowUploadManager.h */,
 				AEBFAEAB260732B6005A4779 /* ShadowUploadManager.m */,
