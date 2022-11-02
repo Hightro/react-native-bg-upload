@@ -9,11 +9,11 @@ const eventPrefix = 'BGUpload-';
 export type UploadEvent = 'progress' | 'error' | 'completed' | 'cancelled';
 
 export interface UploadOptions {
-  url: string;
-  path: string;
-  method?: 'PUT' | 'POST';
-  ID: string;
   headers?: Object;
+  ID: string;
+  method?: 'PUT' | 'POST';
+  path: string;
+  url: string;
 };
 
 export interface IUploadSubscriber {

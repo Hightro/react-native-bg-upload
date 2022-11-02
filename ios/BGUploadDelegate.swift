@@ -108,6 +108,8 @@ class BGUploadDelegate: NSObject, URLSessionDataDelegate {
         } else if let err = error as NSError? {
             event = (err.code == NSURLErrorCancelled ? "cancelled" : "error")
             data.updateValue(err.localizedDescription, forKey: "error")
+        } else {
+            event = "error"
         }
         self.tryEmit(event: event, data: &data, ID: ID)
     }
