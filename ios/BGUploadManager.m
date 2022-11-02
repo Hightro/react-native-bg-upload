@@ -1,19 +1,19 @@
 //
-//  ShadowUploadManager.m
-//  ShadowUploadModule
+//  BGUploadManager.m
+//  BGUploadModule
 //
 //  Created by Joshua Nicholl on 21/3/21.
 //
 
 #import <Foundation/Foundation.h>
 #import <Foundation/NSURLSession.h>
-#import "ShadowUploadManager.h"
+#import "BGUploadManager.h"
 #import <React/RCTLog.h>
 
-@implementation ShadowUploadManager
+@implementation BGUploadManager
 static void (^backgroundCompletionHandler)(void) = nil;
 static NSURLSession* _session = nil;
-NSString* __nonnull backgroundSessionID = @"com.hightro.shadow";
+NSString* __nonnull backgroundSessionID = @"com.usesoftware.bgupload";
 
 + (void)setCompletionHandler:(void (^)(void))handler {
     backgroundCompletionHandler = handler;

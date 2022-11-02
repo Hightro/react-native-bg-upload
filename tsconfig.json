@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "react-native-shadow-upload": ["./src/index"]
+      "react-native-bg-upload": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

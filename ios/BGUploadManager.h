@@ -1,14 +1,14 @@
 //
-//  ShadowUploadResponder.h
+//  BGUploadResponder.h
 //  Pods
 //
 //  Created by Joshua Nicholl on 21/3/21.
 //
 
-#ifndef ShadowUploadResponder_h
-#define ShadowUploadResponder_h
+#ifndef BGUploadResponder_h
+#define BGUploadResponder_h
 
-@interface ShadowUploadManager: NSObject
+@interface BGUploadManager: NSObject
 + (void)setCompletionHandler:(void (^ __nonnull)(void)) handler;
 + (void (^ __nullable)(void))getCompletionHandler;
 + (bool)sessionExists;
@@ -16,4 +16,4 @@
 + (bool)createTaskWithRequest:(NSURLRequest* __nonnull)request withFilePath:(NSURL* __nonnull)path withID:(NSString* __nonnull)taskID;
 + (id<NSURLSessionDataDelegate> __nullable)getDelegate;
 @end
-#endif /* ShadowUploadResponder_h */
+#endif /* BGUploadResponder_h */

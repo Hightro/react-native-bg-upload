@@ -1,22 +1,22 @@
 import Foundation
 
-@objc(ShadowUploadModule)
-class ShadowUploadModule: RCTEventEmitter {
+@objc(BGUploadModule)
+class BGUploadModule: RCTEventEmitter {
     var hasListeners = false
     
     override init() {
         super.init()
-        if(!ShadowUploadManager.sessionExists()){
-            let delegate = ShadowUploadDelegate();
+        if(!BGUploadManager.sessionExists()){
+            let delegate = BGUploadDelegate();
             delegate.assignBridgeModule(self)
-            ShadowUploadManager.createSession(delegate)
-        } else if let delegate = ShadowUploadManager.getDelegate() as? ShadowUploadDelegate {
+            BGUploadManager.createSession(delegate)
+        } else if let delegate = BGUploadManager.getDelegate() as? BGUploadDelegate {
             delegate.assignBridgeModule(self)
         }
     }
     
     deinit {
-        RCTLogInfo("Deallocating ShadowUploadModule")
+        RCTLogInfo("Deallocating BGUploadModule")
     }
     //MARK: Class Utilities
     public func sendUploadUpdate(eventName: String, body: [String: Any]) -> Bool {
@@ -30,10 +30,10 @@ class ShadowUploadModule: RCTEventEmitter {
     //MARK: RCTBridgeModule overrides
     @objc override func supportedEvents() -> [String]! {
         return [
-            "ShadowUpload-progress",
-            "ShadowUpload-cancelled",
-            "ShadowUpload-error",
-            "ShadowUpload-completed"
+            "BGUpload-progress",
+            "BGUpload-cancelled",
+            "BGUpload-error",
+            "BGUpload-completed"
         ]
     }
     
@@ -50,7 +50,7 @@ class ShadowUploadModule: RCTEventEmitter {
     }
     
     @objc override func invalidate() {
-        RCTLogInfo("Invalidating ShadowUploadModule")
+        RCTLogInfo("Invalidating BGUploadModule")
     }
     
     //MARK: Native Module Methods
@@ -83,7 +83,7 @@ class ShadowUploadModule: RCTEventEmitter {
                 request.setValue(val, forHTTPHeaderField: entry.key)
             }
         }
-        if (!ShadowUploadManager.createTask(with: request, withFilePath: mediaStorageLocation, withID: ID)) {
+        if (!BGUploadManager.createTask(with: request, withFilePath: mediaStorageLocation, withID: ID)) {
             return reject("Error", "Target NSURLSession does not exist.", nil)
         }
         
@@ -94,7 +94,7 @@ class ShadowUploadModule: RCTEventEmitter {
     func retrieveEvents(tasks: [String], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         var out: [String: [String: String]?] = [:]
         tasks.forEach({str in out[str] = nil })
-        (ShadowUploadManager.getDelegate() as? ShadowUploadDelegate)?.getLatest(requestedEvents: &out)
+        (BGUploadManager.getDelegate() as? BGUploadDelegate)?.getLatest(requestedEvents: &out)
         resolve(out)
     }
 }

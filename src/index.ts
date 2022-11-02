@@ -1,10 +1,10 @@
 import { NativeModules, NativeEventEmitter, EmitterSubscription } from 'react-native';
 
-const { ShadowUploadModule } = NativeModules
-const emitter = new NativeEventEmitter(ShadowUploadModule);
+const { BGUploadModule } = NativeModules
+const emitter = new NativeEventEmitter(BGUploadModule);
 
 
-const eventPrefix = 'ShadowUpload-';
+const eventPrefix = 'BGUpload-';
 
 export type UploadEvent = 'progress' | 'error' | 'completed' | 'cancelled';
 
@@ -84,11 +84,11 @@ class Uploader {
   }
 
   startUpload(options: UploadOptions): Promise<string> {
-    return ShadowUploadModule.startUpload(options);
+    return BGUploadModule.startUpload(options);
   }
 
   async retrieveLastEvents(taskIDs: string[]) : Promise<{ [id: string]: NativeEventData | undefined }> {
-    return ShadowUploadModule.retrieveEvents(taskIDs);
+    return BGUploadModule.retrieveEvents(taskIDs);
   }
 }
 

@@ -1,6 +1,6 @@
 //
-//  ShadowUploadDelegate.swift
-//  ShadowUploadModule
+//  BGUploadDelegate.swift
+//  BGUploadModule
 //
 //  Created by Joshua Nicholl on 31/3/21.
 //
@@ -8,13 +8,13 @@
 import Foundation
 
 
-class ShadowUploadDelegate: NSObject, URLSessionDataDelegate {
+class BGUploadDelegate: NSObject, URLSessionDataDelegate {
     private let storageFile = "events.json"
     
     private var latestTaskEvents: [String: [String: String]] = [:]
     private var responseBodies: [String: Data] = [:]
     
-    private weak var bridgeModule: ShadowUploadModule?
+    private weak var bridgeModule: BGUploadModule?
     
     override init() {
         super.init()
@@ -71,7 +71,7 @@ class ShadowUploadDelegate: NSObject, URLSessionDataDelegate {
     
     //MARK: Bridge Communication Utilities
     private func tryEmit(event: String, data: inout [String: String], ID: String) -> Void {
-        if let bridgeModule = self.bridgeModule, bridgeModule.sendUploadUpdate(eventName: "ShadowUpload-\(event)", body: data) {
+        if let bridgeModule = self.bridgeModule, bridgeModule.sendUploadUpdate(eventName: "BGUpload-\(event)", body: data) {
             return
         }
         data.updateValue(event, forKey: "eventType")
@@ -85,7 +85,7 @@ class ShadowUploadDelegate: NSObject, URLSessionDataDelegate {
         self.saveLoaded()
     }
     
-    func assignBridgeModule(_ module: ShadowUploadModule) {
+    func assignBridgeModule(_ module: BGUploadModule) {
         self.bridgeModule = module
     }
     
@@ -123,7 +123,7 @@ class ShadowUploadDelegate: NSObject, URLSessionDataDelegate {
     }
     
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-        guard let handler = ShadowUploadManager.getCompletionHandler() else {
+        guard let handler = BGUploadManager.getCompletionHandler() else {
             return;
         }
         DispatchQueue.main.async {
