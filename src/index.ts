@@ -81,6 +81,13 @@ class Uploader {
         sub.onProgress?.(data as NativeProgressEvent);
         break;
       }
+      switch(eventType) {
+      case "progress":
+        break;
+      default:
+        this._unsubscribe(data.ID, sub);
+        break
+      }
     });
   }
 
