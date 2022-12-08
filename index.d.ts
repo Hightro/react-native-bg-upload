@@ -32,8 +32,8 @@ interface NativeProgressEvent {
 }
 
 declare interface IUploadSubscriber {
-  onCancelled?(ev: NativeCancelledEvent): void;
-  onCompleted?(ev: NativeCompletedEvent): void;
-  onError?(ev: NativeErrorEvent): void;
-  onProgress?(ev: NativeProgressEvent): void;
+  onCancelled?(ev: NativeCancelledEvent): any;
+  onCompleted?(ev: NativeCompletedEvent): any;
+  onError?(ev: NativeErrorEvent): any;
+  onProgress?(ev: NativeProgressEvent): any;
 }
