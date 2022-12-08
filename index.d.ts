@@ -1,16 +1,39 @@
-declare type UploadEvent = 'progress' | 'error' | 'completed' | 'cancelled';
+
+declare type UploadEvent = "progress" | "error" | "completed" | "cancelled";
 
 declare interface UploadOptions {
-  url: string;
-  path: string;
-  method?: 'PUT' | 'POST';
-  ID: string;
   headers?: Object;
+  ID: string;
+  method?: 'PUT' | 'POST';
+  path: string;
+  url: string;
 };
 
+interface NativeCancelledEvent {
+  ID: string;
+}
+
+interface NativeCompletedEvent {
+  ID: string;
+  body: any;
+  status: number;
+}
+
+interface NativeErrorEvent {
+  ID: string;
+  body?: any;
+  error: string;
+  status?: number;
+}
+
+interface NativeProgressEvent {
+  ID: string;
+  bytesSent: number;
+}
+
 declare interface IUploadSubscriber {
-  onNativeError: (error: string ) => void;
-  onNativeCancelled: () => void;
-  onNativeProgress: (sent: number) => void;
-  onNativeCompleted: (status: number) => void;
+  onCancelled?(ev: NativeCancelledEvent): void;
+  onCompleted?(ev: NativeCompletedEvent): void;
+  onError?(ev: NativeErrorEvent): void;
+  onProgress?(ev: NativeProgressEvent): void;
 }
