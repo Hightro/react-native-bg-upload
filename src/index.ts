@@ -1,4 +1,4 @@
-import { NativeModules, NativeEventEmitter, EmitterSubscription } from 'react-native';
+import { NativeModules, NativeEventEmitter, EmitterSubscription } from "react-native";
 
 const { BGUploadModule } = NativeModules
 const emitter = new NativeEventEmitter(BGUploadModule);
@@ -18,24 +18,34 @@ export interface UploadOptions {
 
 interface NativeCancelledEvent {
   ID: string;
+  body?: undefined;
+  bytesSent?: undefined;
+  error?: undefined;
+  status?: undefined;
 }
 
 interface NativeCompletedEvent {
   ID: string;
   body: any;
+  bytesSent?: undefined;
+  error?: undefined;
   status: number;
 }
 
 interface NativeErrorEvent {
   ID: string;
   body?: any;
+  bytesSent?: undefined;
   error: string;
   status?: number;
 }
 
 interface NativeProgressEvent {
   ID: string;
+  body?: undefined;
   bytesSent: number;
+  error?: undefined;
+  status?: undefined;
 }
 
 export interface IUploadSubscriber {
