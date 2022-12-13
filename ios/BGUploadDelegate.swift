@@ -71,11 +71,10 @@ class BGUploadDelegate: NSObject, URLSessionDataDelegate {
     
     //MARK: Bridge Communication Utilities
     private func tryEmit(event: String, data: inout [String: String], ID: String) -> Void {
-        if let bridgeModule = self.bridgeModule, bridgeModule.sendUploadUpdate(eventName: "BGUpload-\(event)", body: data) {
-            return
-        }
+        let bridgeModule = self.bridgeModule
         data.updateValue(event, forKey: "eventType")
         self.latestTaskEvents.updateValue(data, forKey: ID)
+        bridgeModule.sendUploadUpdate(eventName: "BGUpload-\(event)", body: data)
     }
     
     func getLatest(requestedEvents: inout [String: [String: String]?]) {
