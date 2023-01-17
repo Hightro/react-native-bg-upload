@@ -19,7 +19,7 @@ class BGUploadModule: RCTEventEmitter {
         RCTLogInfo("Deallocating BGUploadModule")
     }
     //MARK: Class Utilities
-    public func sendUploadUpdate(eventName: String, body: [String: Any]) -> Bool {
+    public func sendUploadUpdate(eventName: String, body: [String: Any]) {
         if hasListeners {
             self.sendEvent(withName: eventName, body: body)
         }
