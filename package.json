@@ -1,6 +1,6 @@
 {
   "name": "@usesoftware/react-native-bg-upload",
-  "version": "0.4.21",
+  "version": "0.4.22",
   "description": "A native module for background upload in react native.",
   "license": "mit",
   "main": "src/index",
