@@ -22,9 +22,7 @@ class BGUploadModule: RCTEventEmitter {
     public func sendUploadUpdate(eventName: String, body: [String: Any]) -> Bool {
         if hasListeners {
             self.sendEvent(withName: eventName, body: body)
-            return true;
         }
-        return false;
     }
     
     //MARK: RCTBridgeModule overrides
